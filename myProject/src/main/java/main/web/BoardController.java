@@ -41,19 +41,112 @@ public class BoardController {
 		
 		@RequestMapping("/boardList.do")
 		public String selectNBoardList(BoardVO vo, ModelMap model) throws Exception{
+		//public String selectNBoardList(BoardVO vo, ModelMap model, int viewPage) throws Exception{
+			
+			int unit = 5;
 			
 			// 총 데이터 개수 
 			int total = boardService.selectNBoardTotal(vo);
 			
 			// (double)12/10 -> 1.2 -> Integer(2.0) -> 2
-			int totalPage = (int) Math.ceil((double)total/10);
+			int totalPage = (int) Math.ceil((double)total/unit);
+			
+			int viewPage = vo.getViewPage();
+			
+			if(viewPage > totalPage || viewPage < 1) {
+				viewPage = 1;
+			}
+			// 1-> 1,10  // 2->11,20  // 3->21,30
+			// startIndex : (1-1)*10 + 1
+			// startIndex : (2-1)*10 + 1 -> 11
+			int startIndex = (viewPage-1) * unit + 1;
+			int endIndex = startIndex + (unit - 1);
+			
+			// total -> 34
+			// 1-> 34 ~ 25 , 2 -> 24 ~ 15 , 3 -> 14 ~ 5 , 4 -> 4 ~ 1
+		    /*
+		    int p1 = total - 0;
+			int p2 = total - 10;
+			int p3 = total - 20;
+            int p4 = total - 30;
+            */
+			
+			int startRowNo = total - (viewPage-1)*unit;
+			
+			vo.setStartIndex(startIndex);
+			vo.setEndIndex(endIndex);
 			
 			List<?> list = boardService.selectNBoardList(vo);
 			System.out.println("list: "+list);
-						 
+			
+			model.addAttribute("rowNumber", startRowNo);			 
 			model.addAttribute("total", total);
 			model.addAttribute("totalPage", totalPage);
 			model.addAttribute("resultList", list);
 			return "board/boardList";
+		}
+		
+		@RequestMapping("/boardDetail.do")
+		public String selectNBoardDetail(BoardVO vo, ModelMap model) throws Exception {
+			// ModelMap은 jsp에 데이터를 담아서 보낼 수 있는 클래스
+			/*
+			 * 조회수 증가
+			 * */
+			boardService.updateNBoardHits(vo.getUnq());
+			/*
+			 * 상세 보기
+			 * */			
+			BoardVO boardVO = boardService.selectNBoardDetail(vo.getUnq());
+			
+			String content = boardVO.getContent(); // \n이 있음
+			boardVO.setContent(content.replace("\n", "<br>")); 
+			
+			model.addAttribute("boardVO", boardVO);
+			
+			return "board/boardDetail";
+		}
+		@RequestMapping("/boardModifyWrite.do")
+		public String selectNBoardModifyWrite(BoardVO vo, ModelMap model) throws Exception{
+			
+			BoardVO boardVO = boardService.selectNBoardDetail(vo.getUnq());
+			model.addAttribute("boardVO", boardVO);
+			
+			return "board/boardModifyWrite";
+		}
+		
+		@RequestMapping("/boardModifySave.do")
+		@ResponseBody
+		public String updateNBoard(BoardVO vo) throws Exception{
+			
+			int result = boardService.updateNBoard(vo); // int result = 1;
+			
+			return result+"";
+			
+		}
+		
+		@RequestMapping("/passWrite.do")
+		public String passWrite(int unq, ModelMap model) {
+			
+			model.addAttribute("unq", unq);
+			return "board/passWrite";
+		}
+		
+		@RequestMapping("/boardDelete.do")
+		@ResponseBody
+		public String deleteBoard(BoardVO vo) throws Exception{
+			
+			int result = 0;
+			/*
+			 * 암호 일치 검사 (count = 1; (일치함) // count = 0; (일치하지 않음))
+			 */
+			int count = boardService.selectNBoardPass(vo);   
+			
+			if(count == 1) {
+			  result = boardService.deleteNBoard(vo); // 삭제성공시 result = 1; 삭제실패시 result = 0;
+			}else if (count == 0) {
+				result = -1;
+			}
+			
+			return result+"";
 		}
 }

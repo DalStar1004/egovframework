@@ -40,15 +40,51 @@ th, td {
 	width: 98%;
 	height: 70px;
 }
+
+.div1{
+	width:600px;
+	text-align:center;
+	font-size:15pt;
+}
+
+.div2{
+	width:600px;
+	text-align:right;
+	font-size:8pt;
+}
+
+.div3{
+	width:600px;
+	text-align:left;
+	font-size:8pt;
+}
 </style>
 
 <body>
+
+<%@ include file="../include/topmenu.jsp" %>
+<br>
+
 <!-- 번호, 제목, 글쓴이, 등록일, 조회수 -->
+<div class="div1">일반게시판 목록</div>
+<div class="div2">Total : ${total }</div>
+
+<div class="div3">
+
+<form name="searchFrm" method="post" action="boardList.do">
+<select name = "searchGubun" id="searchGubun">
+	<option value="title">제목</option>
+	<option value="name">글쓴이</option>
+	<option value="content">내용</option>
+</select>
+	<input type="text" name="searchText" id ="searchText">
+	<button type="submit">검색</button>
+</form>
+
+</div>
+
 <table>
-	<caption>
-		<div>일반게시판 목록</div>
-		<div>Total : ${total }</div>
-	</caption>
+
 	<tr>
 		<th width="15%">번호</th>
 		<th width ="40%">제목</th>
@@ -57,20 +93,22 @@ th, td {
 		<th width ="15%">조회수</th>
 	</tr>
 	
-	<c:set var = "cnt" value = "1" />
+	<c:set var = "cnt" value = "${rowNumber }" />
 	
 	<!-- var : 내부변수 세팅, items : 외부데이터 세팅 -->
 	<c:forEach var="result" items="${resultList }">
 	
 	<tr align = "center">
 		<td><c:out value="${cnt }"/></td>
-		<td  align="left"><c:out value="${result.title }"/></td>
+		<td  align="left">
+			<a href="boardDetail.do?unq=${result.unq }" ><c:out value="${result.title }"/></a>
+		</td>
 		<td><c:out value="${result.name }"/></td>
 		<td><c:out value="${result.rdate }"/></td>
 		<td><c:out value="${result.hits }"/></td>
 	</tr>
 	
-	<c:set var = "cnt" value = "${cnt+1 }"/>
+	<c:set var = "cnt" value = "${cnt-1 }"/>
 
 	</c:forEach>
 
@@ -78,7 +116,7 @@ th, td {
 
 <div style="width:600px; margin-top:5px; text-align:center;">
 	<c:forEach var="i" begin="1" end ="${totalPage }">
-		${i } 
+		<a href="boardList.do?viewPage=${i }">${i }</a> 
 	</c:forEach>
 </div>
 <div style="width:600px; margin-top:5px; text-align:right;">

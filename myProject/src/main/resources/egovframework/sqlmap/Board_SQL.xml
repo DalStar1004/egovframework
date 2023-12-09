@@ -19,7 +19,7 @@
 	</insert>
 
 	<select id ='boardDAO.selectNBoardList' resultClass="egovMap">
-	<![CDATA[
+	
  	SELECT b.* FROM(
 				 SELECT rownum rn, a.* 
 				   FROM 
@@ -30,17 +30,60 @@
 						      ,hits
 						      ,TO_CHAR(rdate,'YYYY-MM-DD') rdate
 						  FROM NBOARD
+				         WHERE 1=1 
+				         <isNotNull property="searchGubun"> 				       
+				         	 <isNotNull property="searchText">
+				          		 AND $searchGubun$ like '%$searchText$%'
+						 	 </isNotNull>			          
+					     </isNotNull>
 					  ORDER BY unq DESC) a
 				 ) b
 		  WHERE 1=1
-		    AND rn >= 1 and rn <=20
-		]]>
+		    AND rn >= #startIndex# and rn <![CDATA[<=]]> #endIndex#
+		
 	</select>
 	
 	<select id ="boardDAO.selectNBoardTotal" resultClass="java.lang.Integer">
 	SELECT COUNT(*) total
   	   FROM NBOARD 
-	
+  	  WHERE 1=1 
+			 <isNotNull property="searchGubun"> 				       
+				<isNotNull property="searchText">
+				   AND $searchGubun$ like '%$searchText$%'
+				</isNotNull>			          
+			 </isNotNull>
 	</select>
+	
+	<select id = 'boardDAO.selectNBoardDetail' resultClass ="boardVO">
+		SELECT 
+		       unq,title, name, content, 
+		       to_char(rdate,'YYYY-MM-DD') rdate
+		  FROM nboard
+		 WHERE unq ='$unq$'
+	     <!-- #unq# : 데이터가 보이자 않음 or '$unq$' : 데이터가 보임으로 변수를 처리할 수 있다 -->
+	</select>
+	
+	<update id="boardDAO.updateNBoardHits">
+		UPDATE nboard SET hits=hits+1 WHERE unq = #unq#
+	</update>
+	
+	<update id="boardDAO.updateNBoard">
+		UPDATE nboard SET 
+		 	 	title = #title#,
+		 	 	name = #name#,
+		 	 	content = #content#
+		 WHERE 
+		       unq = #unq#	 	 
+	</update>
+	
+	<select  id="boardDAO.selectNBoardPass" resultClass = "java.lang.Integer">
+		SELECT COUNT(*) FROM nboard
+		               WHERE unq = #unq# AND pass = #pass#
+	</select>
+	
+	<delete id="boardDAO.deleteNBoard">
+		DELETE FROM nboard
+		            WHERE unq = #unq# AND pass = #pass#
+	</delete>
 	
 </sqlMap>

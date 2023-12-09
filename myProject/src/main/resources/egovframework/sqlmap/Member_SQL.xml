@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+
+<sqlMap namespace="MemberSpace">
+	
+	<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+	<typeAlias  alias="memberVO" type="main.service.memberVO"/>
+
+	<insert id ="memberDAO.insertMember">
+	
+		INSERT INTO member(
+							userid
+						    ,pass
+						    ,name
+						    ,gender
+						    ,birth
+						    ,phone
+						    ,zipcode
+						    ,address
+						    )
+					VALUES(
+							#userid#
+						    ,#pass#
+						    ,#name#
+						    ,#gender#
+						    ,#birth#
+						    ,#phone#
+						    ,#zipcode#
+						    ,#address#
+						) 
+		
+	</insert>
+	
+	<select id ="memberDAO.selectMemberIdCheck" resultClass="java.lang.Integer">
+	 
+		SELECT COUNT(*) 
+ 	      FROM member 
+         WHERE userid = #userid#
+
+	</select> 
+	<select id ="memberDAO.selectPostList" resultClass="egovMap">
+		
+		SELECT '['||a1 ||']' ||
+      		   ' '||a2 as addr
+  		  FROM post
+ 		 WHERE a2 LIKE '%'||#dong#||'%'
+ 		 
+	</select>
+	
+	<select id="memberDAO.selectMemberCount" resultClass = "java.lang.Integer">
+	
+		SELECT COUNT(*) 
+  		  FROM member 
+ 		 WHERE userid = #userid#
+   		   AND pass = #pass#
+	
+	</select>
+	
+</sqlMap>

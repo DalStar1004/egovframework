@@ -25,5 +25,29 @@ public class BoardDAO extends EgovAbstractDAO{
 		return (int) select("boardDAO.selectNBoardTotal",vo);
 	}
 
+	public BoardVO selectNBoardDetail(int unq) {
+		// TODO Auto-generated method stub
+		return (BoardVO) select("boardDAO.selectNBoardDetail",unq);
+	}
+
+	public int updateNBoardHits(int unq) {
+		// TODO Auto-generated method stub
+		return update("boardDAO.updateNBoardHits",unq);
+	}
+
+	public int updateNBoard(BoardVO vo) {
+		// TODO Auto-generated method stub
+		return update("boardDAO.updateNBoard",vo);
+	}
+
+	public int deleteNBoard(BoardVO vo) {
+		// TODO Auto-generated method stub
+		return delete("boardDAO.deleteNBoard",vo);
+	}
+
+	public int selectNBoardPass(BoardVO vo) {
+		// TODO Auto-generated method stub
+		return (int) select("boardDAO.selectNBoardPass",vo);
+	}
 	
 }

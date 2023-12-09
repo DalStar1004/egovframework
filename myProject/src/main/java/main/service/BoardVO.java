@@ -11,9 +11,47 @@ public class BoardVO {
 	public int hits;
 	public String rdate;
 	
-	
+	private int viewPage = 1;
+	private int startIndex = 1;
+	private int endIndex = 10;
 	// get & set 메소드처리
 	
+	private String searchGubun;
+	private String searchText;
+	
+	
+	// get/set 메소드 처리
+	
+	public int getViewPage() {
+		return viewPage;
+	}
+	public String getSearchGubun() {
+		return searchGubun;
+	}
+	public void setSearchGubun(String searchGubun) {
+		this.searchGubun = searchGubun;
+	}
+	public String getSearchText() {
+		return searchText;
+	}
+	public void setSearchText(String searchText) {
+		this.searchText = searchText;
+	}
+	public int getStartIndex() {
+		return startIndex;
+	}
+	public void setStartIndex(int startIndex) {
+		this.startIndex = startIndex;
+	}
+	public int getEndIndex() {
+		return endIndex;
+	}
+	public void setEndIndex(int endIndex) {
+		this.endIndex = endIndex;
+	}
+	public void setViewPage(int viewPage) {
+		this.viewPage = viewPage;
+	}
 	public int getUnq() {
 		return unq;
 	}
